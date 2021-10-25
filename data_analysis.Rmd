@@ -59,7 +59,7 @@ toks_2 <- tokens(text_corpus,
 ```
 
 ### Two word phrases
-```{r wordcloud_2, echo=FALSE}
+```{r wordcloud_2, echo=FALSE, warning=FALSE}
 
 # thing to talk about -- Mueller report
 wordcloud_dfm_2 <- dfm(toks_2, groups = "channel")
@@ -94,7 +94,7 @@ toks_3 <- tokens(text_corpus,
 
 ### Three word phrases
 
-```{r wordcloud_3, echo=FALSE}
+```{r wordcloud_3, echo=FALSE,warning=FALSE}
 
 # thing to talk about -- Mueller report
 wordcloud_dfm_3 <- dfm(toks_3, groups = "channel")
@@ -104,3 +104,86 @@ textplot_wordcloud(wordcloud_dfm_3, comparison = T,
                    max_size = 3.7)
 
 ```
+
+
+## Keyness plots
+
+### Two word phrases
+
+```{r echo=FALSE}
+
+key_dfm_2 <- dfm(toks_2, groups = "channel")
+
+# CNN keyness
+
+CNN_keyness_2 <- textstat_keyness(key_dfm_2, target = "CNNW")
+
+CNN_key_2 <- textplot_keyness(CNN_keyness_2,
+                 n = 15L,
+                 margin = .2,
+                 labelsize = 3)
+
+# Fox keyness
+
+Fox_keyness_2 <- textstat_keyness(key_dfm_2, target = "FOXNEWSW")
+
+Fox_key_2 <- textplot_keyness(Fox_keyness_2,
+                 n = 15L,
+                 margin = .2,
+                 labelsize = 3)
+
+# MSNBC keyness
+
+MSNBC_keyness_2 <- textstat_keyness(key_dfm_2, target = "MSNBCW")
+
+MSNBC_key_2 <- textplot_keyness(MSNBC_keyness_2,
+                 n = 15L,
+                 margin = .2,
+                 labelsize = 3)
+
+CNN_key_2
+Fox_key_2
+MSNBC_key_2
+
+```
+
+### Three word phrases
+
+```{r echo=FALSE}
+
+key_dfm_3 <- dfm(toks_3, groups = "channel")
+
+# CNN keyness
+
+CNN_keyness_3 <- textstat_keyness(key_dfm_3, target = "CNNW")
+
+CNN_key_3 <- textplot_keyness(CNN_keyness_3,
+                 n = 15L,
+                 margin = .2,
+                 labelsize = 3)
+
+# Fox keyness
+
+Fox_keyness_3 <- textstat_keyness(key_dfm_3, target = "FOXNEWSW")
+
+Fox_key_3 <- textplot_keyness(Fox_keyness_3,
+                 n = 15L,
+                 margin = .2,
+                 labelsize = 3)
+
+# MSNBC keyness
+
+MSNBC_keyness_3 <- textstat_keyness(key_dfm_3, target = "MSNBCW")
+
+MSNBC_key_3 <- textplot_keyness(MSNBC_keyness_3,
+                 n = 15L,
+                 margin = .2,
+                 labelsize = 3)
+
+CNN_key_3
+Fox_key_3
+MSNBC_key_3
+
+```
+
+
