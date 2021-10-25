@@ -25,22 +25,9 @@ library(ggrepel)
 library(ggpubr)
 ```
 
-```{r data loading, include = FALSE}
+```{r data loading, message = FALSE, include = FALSE}
 
-# reading in data
-
-chyrons <- read_csv("chyron_data.csv") %>%
-  clean_names() %>%
-  filter(channel != "BBCNEWS")
-
-# cleaning data, changing the date formats. Need to decide what to do with the duration thing
-
-tidy_chyrons <- chyrons %>%
-  mutate(date_sub = substr(date_time_utc, 1, 10),
-         date = ymd(date_sub)) %>%
-  select(-date_sub, - date_time_utc, -https_archive_org_details)
-
-summary(tidy_chyrons)
+tidy_chyrons <- read_csv("tidy_chyron_data.csv")
 
 # Turning data into a corpus for quanteda
 
@@ -49,14 +36,71 @@ text_corpus <- corpus(tidy_chyrons, text_field = "text")
 ```
 
 
+## Wordclouds
 
-```{r congress}
+```{r tokens_2, echo=FALSE}
 
-# I need to process all of the speeches and then do counts of language by party
+# turning corpus into tokens. Removing unimportant words and selectng for ngrams
+# = 2. Code taken from gov51 final project
 
-congress <- read_sav("congress.sav")
+toks_2 <- tokens(text_corpus,
+               remove_punct = TRUE,
+               remove_symbols = TRUE,
+               remove_numbers = TRUE,
+               remove_url = TRUE) %>%
+  tokens_tolower() %>%
+  tokens_remove(pattern=stopwords("en")) %>%
+  tokens_remove(pattern = c("u201c", "u00b0", "u2014", "wopi", "avi", "ooo", 
+                            "000", "ito", "ynl", "f'avl", "foxnews.com", 
+                            "ufb02pi", "ufb021", "ufbo2l", "ufb02L", "rpm")) %>%
+  tokens_select(min_nchar = 3) %>%
+  tokens_ngrams(n = 2)
+
+```
+
+### Two word phrases
+```{r wordcloud_2, echo=FALSE}
+
+# thing to talk about -- Mueller report
+wordcloud_dfm_2 <- dfm(toks_2, groups = "channel")
+textplot_wordcloud(wordcloud_dfm_2, comparison = T,
+                   min_count = 200,
+                   min_size = .5,
+                   max_size = 3.7)
+
 ```
 
 
 
+```{r tokens_3, echo=FALSE}
 
+# turning corpus into tokens. Removing unimportant words and selectng for ngrams
+# = 2. Code taken from gov51 final project
+
+toks_3 <- tokens(text_corpus,
+               remove_punct = TRUE,
+               remove_symbols = TRUE,
+               remove_numbers = TRUE,
+               remove_url = TRUE) %>%
+  tokens_tolower() %>%
+  tokens_remove(pattern=stopwords("en")) %>%
+  tokens_remove(pattern = c("u201c", "u00b0", "u2014", "wopi", "avi", "ooo", 
+                            "000", "ito", "ynl", "f'avl", "foxnews.com", 
+                            "ufb02pi", "ufb021", "ufbo2l", "ufb02L", "rpm")) %>%
+  tokens_select(min_nchar = 3) %>%
+  tokens_ngrams(n = 3)
+
+```
+
+### Three word phrases
+
+```{r wordcloud_3, echo=FALSE}
+
+# thing to talk about -- Mueller report
+wordcloud_dfm_3 <- dfm(toks_3, groups = "channel")
+textplot_wordcloud(wordcloud_dfm_3, comparison = T,
+                   min_count = 200,
+                   min_size = .5,
+                   max_size = 3.7)
+
+```
