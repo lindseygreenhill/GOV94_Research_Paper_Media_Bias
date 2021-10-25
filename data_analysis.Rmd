@@ -1,0 +1,62 @@
+---
+title: "data_analysis"
+author: "Lindsey Greenhill"
+date: "10/11/2021"
+output: pdf_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Loading necessary packages
+library(gt)
+library(quanteda)
+library(broom)
+library(skimr)
+library(lubridate)
+library(janitor)
+library(dotwhisker)
+library(tidytext)
+library(haven)
+library(ggthemes)
+library(webshot)
+library(stargazer)
+library(tidyverse)
+library(patchwork)
+library(ggrepel)
+library(ggpubr)
+```
+
+```{r data loading, include = FALSE}
+
+# reading in data
+
+chyrons <- read_csv("chyron_data.csv") %>%
+  clean_names() %>%
+  filter(channel != "BBCNEWS")
+
+# cleaning data, changing the date formats. Need to decide what to do with the duration thing
+
+tidy_chyrons <- chyrons %>%
+  mutate(date_sub = substr(date_time_utc, 1, 10),
+         date = ymd(date_sub)) %>%
+  select(-date_sub, - date_time_utc, -https_archive_org_details)
+
+summary(tidy_chyrons)
+
+# Turning data into a corpus for quanteda
+
+text_corpus <- corpus(tidy_chyrons, text_field = "text")
+  
+```
+
+
+
+```{r congress}
+
+# I need to process all of the speeches and then do counts of language by party
+
+congress <- read_sav("congress.sav")
+```
+
+
+
+
