@@ -29,6 +29,9 @@ load("data/bias_data/bias_data_clean.RData")
 # Dictionary
 
 ```{r echo=FALSE}
+
+# dictionary taken from analysis for Gov1372
+
 content_dict <- dictionary(list(republican = c("biden",
                                                "border",
                                                "democrat",

@@ -1,0 +1,135 @@
+---
+title: "sentiment_data_analysis"
+author: "Lindsey Greenhill"
+date: "11/18/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(gt)
+library(quanteda)
+library(broom)
+library(skimr)
+library(lubridate)
+library(janitor)
+library(dotwhisker)
+library(textdata)
+library(tidytext)
+library(haven)
+library(ggthemes)
+library(webshot)
+library(stargazer)
+library(tidyverse)
+library(patchwork)
+library(tidytext)
+library(ggrepel)
+library(ggpubr)
+load("data/bias_data/bias_data_clean.RData")
+```
+
+## Afghanistan
+
+```{r echo=FALSE}
+
+# creating an afghanistan DF
+
+afghanistan_df <- tidy_data %>%
+  mutate(text = tolower(text),
+         mention = grepl("afghanistan", text)) %>%
+  filter(mention)
+
+# creating a chyron ID
+
+afghanistan_df$chyron_id <- seq.int(nrow(afghanistan_df))
+
+# looking at the daily counts
+
+afghanistan_chyron_counts <- tidy_data %>%
+  mutate(text = tolower(text),
+         mention = grepl("afghanistan", text)) %>%
+  filter(mention) %>%
+  count(date, channel) %>%
+  ggplot(aes(x = date, y = n)) +
+  geom_col() +
+  facet_wrap(~channel) +
+  theme_clean() +
+  labs(title = "Chyrons that mention Afghanistan",
+       x = "",
+       y = "# Chyrons")
+
+afghanistan_chyron_counts
+
+# doing the sentiment analysis
+
+af_sentiment <- afghanistan_df %>%
+  unnest_tokens(word, text) %>%
+  inner_join(get_sentiments("afinn"))
+
+sentiment_scores <- afghanistan_df %>%
+  left_join(af_sentiment %>%
+              group_by(chyron_id) %>%
+              summarise(score = sum(value))) %>%
+  replace_na(list(score = 0))
+
+# going to do a scatterplot
+
+sentiment_scores %>%
+  ggplot(aes(x = date, y = score)) +
+  geom_point() +
+  facet_wrap(~channel) +
+  theme_clean()
+```
+
+## Covid
+
+```{r echo=FALSE}
+
+# saying either covid or corona counts
+
+covid_df <- tidy_data %>%
+  mutate(text = tolower(text),
+         mention_covid = grepl("covid", text),
+         mention_corona = grepl("corona", text),
+         mention = if_else(mention_covid | mention_corona, TRUE, FALSE)) %>%
+  filter(mention)
+
+covid_chyron_counts <- covid_df %>%
+  count(date, channel) %>%
+  ggplot(aes(x = date, y = n)) +
+  geom_col() +
+  facet_wrap(~channel) +
+  theme_clean() +
+  labs(title = "Chyrons that mention Covid",
+       x = "",
+       y = "# Chyrons")
+
+covid_chyron_counts
+```
+
+## Impeachment
+
+```{r echo=FALSE}
+impeach_df <- tidy_data %>%
+  mutate(text = tolower(text),
+         mention = grepl("impeach", text)) %>%
+  filter(mention)
+
+impeach_chyron_counts <- impeach_df %>%
+  count(date, channel) %>%
+  ggplot(aes(x = date, y = n)) +
+  geom_col() +
+  facet_wrap(~channel) +
+  theme_clean() +
+  labs(title = "Chyrons that mention Impeachment",
+       x = "",
+       y = "# Chyrons")
+
+impeach_chyron_counts
+```
+
+```{r}
+
+text_corpus <- corpus(tidy_data, text_field = "text")
+```
+
