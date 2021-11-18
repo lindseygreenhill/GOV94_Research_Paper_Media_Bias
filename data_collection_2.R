@@ -2,6 +2,8 @@
 # is consistent with the dictionaries. So we have from November 3, 2020 to
 # today, November 17, 2021. It actually might make more sense to just look at
 # the year so I am going to November 3, 2021. 
+library(janitor)
+library(lubridate)
 library(tidyverse)
 set.seed(123)
 
@@ -29,3 +31,27 @@ file_8 <- read_tsv("data/bias_data/third-eye-11_17_20.tsv")
 file_9 <- read_tsv("data/bias_data/third-eye-10_12_21.tsv")
 file_10 <- read_tsv("data/bias_data/third-eye-02_16_21.tsv")
 
+# combining the data
+
+combined_data <- file_1 %>%
+  rbind(file_2) %>%
+  rbind(file_3) %>%
+  rbind(file_4) %>%
+  rbind(file_5) %>%
+  rbind(file_6) %>%
+  rbind(file_7) %>%
+  rbind(file_8) %>%
+  rbind(file_9) %>%
+  rbind(file_10)
+
+
+# cleaning the data
+
+tidy_data <- combined_data %>%
+  clean_names() %>%
+  filter(channel != "BBCNEWS") %>%
+  mutate(date_sub = substr(date_time_utc, 1, 10),
+         date = ymd(date_sub)) %>%
+  select(-date_sub, - date_time_utc, -https_archive_org_details)
+
+save(tidy_data, file = "data/bias_data/bias_data_clean.RData")

@@ -1,0 +1,142 @@
+---
+title: "bias_data_analysis"
+author: "Lindsey Greenhill"
+date: "11/18/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(gt)
+library(quanteda)
+library(broom)
+library(skimr)
+library(lubridate)
+library(janitor)
+library(dotwhisker)
+library(tidytext)
+library(haven)
+library(ggthemes)
+library(webshot)
+library(stargazer)
+library(tidyverse)
+library(patchwork)
+library(ggrepel)
+library(ggpubr)
+load("data/bias_data/bias_data_clean.RData")
+```
+
+# Dictionary
+
+```{r cars echo=FALSE}
+content_dict <- dictionary(list(republican = c("biden",
+                                               "border",
+                                               "democrat",
+                                               "spend",
+                                               "illeg",
+                                               "china",
+                                               "inflat",
+                                               "pelosi",
+                                               "trillion",
+                                               "afghanistan",
+                                               "polici",
+                                               "southern",
+                                               "communist",
+                                          "bidenbordercrisi",
+                                          "radic",
+                                          "mandat",
+                                          "joe",
+                                          "dem",
+                                          "taxpay",
+                                          "socialist"),
+                                democrat = c("black",
+                                             "work",
+                                             "payment",
+                                             "violenc",
+                                             "vote",
+                                             "act",
+                                             "childtaxcredit",
+                                             "pandem",
+                                             "democraci",
+                                             "communiti",
+                                             "famili",
+                                             "child",
+                                             "help",
+                                             "buildbackbett",
+                                             "pass",
+                                             "care",
+                                             "invest",
+                                             "climat",
+                                        "americanrescueplan",
+                                        "health")))
+```
+
+## Text Corpus
+
+```{r echo=FALSE}
+
+# creating text corpus
+
+text_corpus <- corpus(tidy_data, text_field = "text")
+
+# creating dfm for cocntent analysis
+
+content_toks <- tokens(text_corpus,
+               remove_punct = TRUE,
+               remove_symbols = TRUE,
+               remove_numbers = TRUE,
+               remove_url = TRUE) %>%
+  tokens_tolower() %>%
+  tokens_remove(pattern=stopwords("en")) %>%
+  tokens_remove(pattern = c("u201c", "u00b0", "u2014", "wopi", "avi", "ooo", 
+                            "000", "ito", "ynl", "f'avl", "foxnews.com", 
+                            "ufb02pi", "ufb021", "ufbo2l", "ufb02L", "rpm")) %>%
+  tokens_select(min_nchar = 3)
+
+content_dfm <- dfm(content_toks, groups = c("channel", "date"))
+
+# selecting words in the dictionaries
+
+content_categories <- dfm_lookup(content_dfm, dictionary = content_dict)
+
+# turning dfm into dataframe
+
+content_df <- convert(content_categories, to = "data.frame") %>%
+  group_by(doc_id) %>%
+  separate(doc_id, c("channel", "date"), extra = "merge") %>%
+  mutate(date = ymd(date))
+
+```
+
+## Boxplots
+
+```{r echo=FALSE}
+rep_box <- content_df %>%
+  group_by(channel) %>%
+  ggplot(., aes(channel, republican)) +
+  geom_boxplot() +
+  theme_clean() +
+  labs(title = "Republican Language in Chyrons by Channel",
+       x = "Channel",
+       y = "Daily Language Count")
+
+dem_box <- content_df %>%
+  group_by(channel) %>%
+  ggplot(., aes(channel, democrat)) +
+  geom_boxplot() +
+  theme_clean() +
+  labs(title = "Democrat Language in Chyrons by Channel",
+       x = "Channel",
+       y = "Daily Language Count")
+
+rep_box
+dem_box
+```
+
+##  Regression
+
+```{r}
+
+  
+```
+
