@@ -28,7 +28,7 @@ load("data/bias_data/bias_data_clean.RData")
 
 # Dictionary
 
-```{r cars echo=FALSE}
+```{r echo=FALSE}
 content_dict <- dictionary(list(republican = c("biden",
                                                "border",
                                                "democrat",
@@ -111,7 +111,10 @@ content_df <- convert(content_categories, to = "data.frame") %>%
 ## Boxplots
 
 ```{r echo=FALSE}
-rep_box <- content_df %>%
+
+# creating boxplots of word counts
+
+rep_box_count <- content_df %>%
   group_by(channel) %>%
   ggplot(., aes(channel, republican)) +
   geom_boxplot() +
@@ -120,7 +123,7 @@ rep_box <- content_df %>%
        x = "Channel",
        y = "Daily Language Count")
 
-dem_box <- content_df %>%
+dem_box_count <- content_df %>%
   group_by(channel) %>%
   ggplot(., aes(channel, democrat)) +
   geom_boxplot() +
@@ -129,14 +132,79 @@ dem_box <- content_df %>%
        x = "Channel",
        y = "Daily Language Count")
 
-rep_box
-dem_box
+rep_box_count
+dem_box_count
+
+# now I'm creating a "score" variable that is Republican language - Democrat
+# language
+
+content_df <- content_df %>%
+  mutate(score = republican - democrat,
+         channel = as_factor(channel))
+
+score_box <- content_df %>%
+  group_by(channel) %>%
+  ggplot(., aes(channel, score)) +
+  geom_boxplot() +
+  theme_clean() +
+  labs(title = "Language Score by Channel",
+       subtitle = "Score = Republican - Democrat",
+       x = "Channel",
+       y = "Daily Language Score")
+score_box
+  
 ```
 
 ##  Regression
 
-```{r}
+```{r echo=FALSE, results = "asis", message=FALSE}
 
-  
+# doing scatterplots
+
+rep_scatter <- content_df %>%
+  ggplot(aes(x = date, y = republican, color = channel, fill = channel)) +
+  geom_smooth(method = "lm") +
+  geom_point() +
+  theme_clean() +
+  labs(title = "Republican Language by Channel",
+       x = "Date",
+       y = "Daily Language Count")
+
+dem_scatter <- content_df %>%
+  ggplot(aes(x = date, y = democrat, color = channel, fill = channel)) +
+  geom_smooth(method = "lm") +
+  geom_point() +
+  theme_clean() +
+  labs(title = "Democrat Language by Channel",
+       x = "Date",
+       y = "Daily Language Count")
+
+score_scatter <- content_df %>%
+  ggplot(aes(x = date, y = score, color = channel, fill = channel)) +
+  geom_smooth(method = "lm") +
+  geom_point() +
+  theme_clean() +
+  labs(title = "Language Score by Channel",
+       x = "Date",
+       y = "Daily Language Count")
+
+rep_scatter
+dem_scatter
+score_scatter
+
+# no dates
+
+mod_rep <- lm(republican ~ channel,
+              data = content_df)
+mod_dem <- lm(democrat ~ channel,
+              data = content_df)
+mod_score <- lm(score ~ channel ,
+                data = content_df)
+
+stargazer(mod_rep,
+          mod_dem,
+          mod_score,
+          type = "latex")
+
 ```
 
