@@ -32,6 +32,7 @@ tidy_chyrons <- read_csv("tidy_chyron_data.csv")
 # Turning data into a corpus for quanteda
 
 text_corpus <- corpus(tidy_chyrons, text_field = "text")
+
   
 ```
 
