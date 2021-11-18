@@ -72,12 +72,17 @@ sentiment_scores <- afghanistan_df %>%
               summarise(score = sum(value))) %>%
   replace_na(list(score = 0))
 
-# going to do a scatterplot
+# going to do a scatterplot and boxplot
 
-sentiment_scores %>%
+af_scatter_plot <- sentiment_scores %>%
   ggplot(aes(x = date, y = score)) +
   geom_point() +
   facet_wrap(~channel) +
+  theme_clean()
+
+af_box_plot <- sentiment_scores %>%
+  ggplot(aes(x = channel, y = score)) +
+  geom_boxplot() +
   theme_clean()
 ```
 
