@@ -60,6 +60,8 @@ afghanistan_chyron_counts <- tidy_data %>%
 
 afghanistan_chyron_counts
 
+# ggsave(plot = afghanistan_chyron_counts, "plots/afghanistan_chyron_counts.png")
+
 # doing the sentiment analysis
 
 af_sentiment <- afghanistan_df %>%
@@ -83,6 +85,8 @@ af_scatter_plot <- sentiment_scores %>%
        x = "",
        y = "Sentiment Score")
 
+# ggsave(plot = af_scatter_plot, "plots/af_sentiment_scatter_plot.png")
+
 af_box_plot <- sentiment_scores %>%
   ggplot(aes(x = channel, y = score)) +
   geom_boxplot(fill = "azure3") +
@@ -90,6 +94,7 @@ af_box_plot <- sentiment_scores %>%
   labs(title = "Sentiment Scores of Chyrons mentioning Afghanistan",
        x = "",
        y = "Sentiment Score")
+# ggsave(plot = af_box_plot, "plots/af_sentiment_boxplot.png")
 
 af_scatter_plot
 af_box_plot
