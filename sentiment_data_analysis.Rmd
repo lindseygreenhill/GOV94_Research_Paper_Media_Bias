@@ -76,14 +76,23 @@ sentiment_scores <- afghanistan_df %>%
 
 af_scatter_plot <- sentiment_scores %>%
   ggplot(aes(x = date, y = score)) +
-  geom_point() +
+  geom_point(color = "azure3") +
   facet_wrap(~channel) +
-  theme_clean()
+  theme_clean()  +
+  labs(title = "Sentiment Scores of Chyrons mentioning Afghanistan",
+       x = "",
+       y = "Sentiment Score")
 
 af_box_plot <- sentiment_scores %>%
   ggplot(aes(x = channel, y = score)) +
-  geom_boxplot() +
-  theme_clean()
+  geom_boxplot(fill = "azure3") +
+  theme_clean() +
+  labs(title = "Sentiment Scores of Chyrons mentioning Afghanistan",
+       x = "",
+       y = "Sentiment Score")
+
+af_scatter_plot
+af_box_plot
 ```
 
 ## Covid
@@ -99,6 +108,8 @@ covid_df <- tidy_data %>%
          mention = if_else(mention_covid | mention_corona, TRUE, FALSE)) %>%
   filter(mention)
 
+covid_df$chyron_id <- seq.int(nrow(covid_df))
+
 covid_chyron_counts <- covid_df %>%
   count(date, channel) %>%
   ggplot(aes(x = date, y = n)) +
@@ -110,6 +121,40 @@ covid_chyron_counts <- covid_df %>%
        y = "# Chyrons")
 
 covid_chyron_counts
+
+# doing the sentiment analysis
+
+covid_sentiment <- covid_df %>%
+  unnest_tokens(word, text) %>%
+  inner_join(get_sentiments("afinn"))
+
+sentiment_scores_covid <- covid_df %>%
+  left_join(covid_sentiment %>%
+              group_by(chyron_id) %>%
+              summarise(score = sum(value))) %>%
+  replace_na(list(score = 0))
+
+# going to do a scatterplot and boxplot
+
+covid_scatter_plot <- sentiment_scores_covid %>%
+  ggplot(aes(x = date, y = score)) +
+  geom_point(color = "azure3") +
+  facet_wrap(~channel) +
+  theme_clean()  +
+  labs(title = "Sentiment Scores of Chyrons mentioning Covid",
+       x = "",
+       y = "Sentiment Score")
+
+covid_box_plot <- sentiment_scores_covid %>%
+  ggplot(aes(x = channel, y = score)) +
+  geom_boxplot(fill = "azure3") +
+  theme_clean() +
+  labs(title = "Sentiment Scores of Chyrons mentioning Covid",
+       x = "",
+       y = "Sentiment Score")
+
+covid_scatter_plot
+covid_box_plot
 ```
 
 ## Impeachment
@@ -119,6 +164,8 @@ impeach_df <- tidy_data %>%
   mutate(text = tolower(text),
          mention = grepl("impeach", text)) %>%
   filter(mention)
+
+impeach_df$chyron_id <- seq.int(nrow(impeach_df))
 
 impeach_chyron_counts <- impeach_df %>%
   count(date, channel) %>%
@@ -131,10 +178,42 @@ impeach_chyron_counts <- impeach_df %>%
        y = "# Chyrons")
 
 impeach_chyron_counts
+
+# doing the sentiment analysis
+
+impeach_sentiment <- impeach_df %>%
+  unnest_tokens(word, text) %>%
+  inner_join(get_sentiments("afinn"))
+
+sentiment_scores_impeach <- impeach_df %>%
+  left_join(impeach_sentiment %>%
+              group_by(chyron_id) %>%
+              summarise(score = sum(value))) %>%
+  replace_na(list(score = 0))
+
+# going to do a scatterplot and boxplot
+
+impeach_scatter_plot <- sentiment_scores_impeach %>%
+  ggplot(aes(x = date, y = score)) +
+  geom_point(color = "azure3") +
+  facet_wrap(~channel) +
+  theme_clean()  +
+  labs(title = "Sentiment Scores of Chyrons mentioning Impeachment",
+       x = "",
+       y = "Sentiment Score")
+
+impeach_box_plot <- sentiment_scores_impeach %>%
+  ggplot(aes(x = channel, y = score)) +
+  geom_boxplot(fill = "azure3") +
+  theme_clean() +
+  labs(title = "Sentiment Scores of Chyrons mentioning Impeachment",
+       x = "",
+       y = "Sentiment Score")
+
+impeach_scatter_plot
+impeach_box_plot
+
+
 ```
 
-```{r}
-
-text_corpus <- corpus(tidy_data, text_field = "text")
-```
 
