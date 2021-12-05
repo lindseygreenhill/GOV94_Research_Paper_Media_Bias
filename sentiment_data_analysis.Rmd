@@ -30,7 +30,7 @@ load("data/bias_data/bias_data_clean.RData")
 
 ## Afghanistan
 
-```{r echo=FALSE}
+```{r echo=FALSE, results="asis"}
 
 # creating an afghanistan DF
 
@@ -95,15 +95,20 @@ af_box_plot <- sentiment_scores %>%
        x = "",
        y = "Sentiment Score")
 
+af_mod <- lm(score ~ channel, data = sentiment_scores)
+
 # ggsave(plot = af_box_plot, "plots/af_sentiment_boxplot.png")
 
 af_scatter_plot
 af_box_plot
+
+stargazer(af_mod, type = "latex",
+          title = "Afghanistan")
 ```
 
 ## Covid
 
-```{r echo=FALSE}
+```{r echo=FALSE, results="asis"}
 
 # saying either covid or corona counts
 
@@ -163,15 +168,20 @@ covid_box_plot <- sentiment_scores_covid %>%
        x = "",
        y = "Sentiment Score")
 
+covid_mod <- lm(score ~ channel, data = sentiment_scores_covid)
+
 # ggsave(plot = covid_box_plot, "plots/covid_sentiment_boxplot.png")
 
 covid_scatter_plot
 covid_box_plot
+
+stargazer(covid_mod, type = "latex",
+          title = "Covid")
 ```
 
 ## Impeachment
 
-```{r echo=FALSE}
+```{r echo=FALSE, results="asis"}
 impeach_df <- tidy_data %>%
   mutate(text = tolower(text),
          mention = grepl("impeach", text)) %>%
@@ -228,9 +238,12 @@ impeach_box_plot <- sentiment_scores_impeach %>%
 
 # ggsave(plot = impeach_box_plot, "plots/impeach_sentiment_boxplot.png")
 
+impeach_mod <- lm(score ~ channel, data = sentiment_scores_impeach)
+
 impeach_scatter_plot
 impeach_box_plot
-
+stargazer(impeach_mod, type = "latex",
+          title = "Impeachment")
 
 ```
 
