@@ -120,7 +120,7 @@ content_df <- convert(content_categories, to = "data.frame") %>%
 rep_box_count <- content_df %>%
   group_by(channel) %>%
   ggplot(., aes(channel, republican)) +
-  geom_boxplot() +
+  geom_boxplot(fill = "azure3") +
   theme_clean() +
   labs(title = "Republican Language in Chyrons by Channel",
        x = "Channel",
@@ -129,14 +129,16 @@ rep_box_count <- content_df %>%
 dem_box_count <- content_df %>%
   group_by(channel) %>%
   ggplot(., aes(channel, democrat)) +
-  geom_boxplot() +
+  geom_boxplot(fill = "azure3") +
   theme_clean() +
   labs(title = "Democrat Language in Chyrons by Channel",
        x = "Channel",
        y = "Daily Language Count")
 
 rep_box_count
+# ggsave(filename = "plots/republican_language_by_channel.png")
 dem_box_count
+# ggsave(filename = "plots/democrat_language_by_channel.png")
 
 # now I'm creating a "score" variable that is Republican language - Democrat
 # language
@@ -148,13 +150,14 @@ content_df <- content_df %>%
 score_box <- content_df %>%
   group_by(channel) %>%
   ggplot(., aes(channel, score)) +
-  geom_boxplot() +
+  geom_boxplot(fill = "azure3") +
   theme_clean() +
   labs(title = "Language Score by Channel",
        subtitle = "Score = Republican - Democrat",
        x = "Channel",
        y = "Daily Language Score")
 score_box
+ggsave(filename = "plots/score_language_by_channel.png")
   
 ```
 
@@ -192,8 +195,11 @@ score_scatter <- content_df %>%
        y = "Daily Language Count")
 
 rep_scatter
+# ggsave(filename = "plots/republican_scatter.png")
 dem_scatter
+# ggsave(filename = "plots/democrat_scatter.png")
 score_scatter
+# ggsave(filename = "plots/score_scatter.png")
 
 # no dates
 

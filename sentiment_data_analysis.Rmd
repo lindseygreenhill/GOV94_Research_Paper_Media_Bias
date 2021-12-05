@@ -94,6 +94,7 @@ af_box_plot <- sentiment_scores %>%
   labs(title = "Sentiment Scores of Chyrons mentioning Afghanistan",
        x = "",
        y = "Sentiment Score")
+
 # ggsave(plot = af_box_plot, "plots/af_sentiment_boxplot.png")
 
 af_scatter_plot
@@ -127,6 +128,8 @@ covid_chyron_counts <- covid_df %>%
 
 covid_chyron_counts
 
+# ggsave(plot = covid_chyron_counts, "plots/covid_chyron_counts.png")
+
 # doing the sentiment analysis
 
 covid_sentiment <- covid_df %>%
@@ -150,6 +153,8 @@ covid_scatter_plot <- sentiment_scores_covid %>%
        x = "",
        y = "Sentiment Score")
 
+# ggsave(plot = covid_scatter_plot, "plots/covid_sentiment_scatter_plot.png")
+
 covid_box_plot <- sentiment_scores_covid %>%
   ggplot(aes(x = channel, y = score)) +
   geom_boxplot(fill = "azure3") +
@@ -157,6 +162,8 @@ covid_box_plot <- sentiment_scores_covid %>%
   labs(title = "Sentiment Scores of Chyrons mentioning Covid",
        x = "",
        y = "Sentiment Score")
+
+# ggsave(plot = covid_box_plot, "plots/covid_sentiment_boxplot.png")
 
 covid_scatter_plot
 covid_box_plot
@@ -184,6 +191,8 @@ impeach_chyron_counts <- impeach_df %>%
 
 impeach_chyron_counts
 
+# ggsave(plot = impeach_chyron_counts, "plots/impeach_chyron_counts.png")
+
 # doing the sentiment analysis
 
 impeach_sentiment <- impeach_df %>%
@@ -207,6 +216,8 @@ impeach_scatter_plot <- sentiment_scores_impeach %>%
        x = "",
        y = "Sentiment Score")
 
+# ggsave(plot = impeach_scatter_plot, "plots/impeach_sentiment_scatter_plot.png")
+
 impeach_box_plot <- sentiment_scores_impeach %>%
   ggplot(aes(x = channel, y = score)) +
   geom_boxplot(fill = "azure3") +
@@ -214,6 +225,8 @@ impeach_box_plot <- sentiment_scores_impeach %>%
   labs(title = "Sentiment Scores of Chyrons mentioning Impeachment",
        x = "",
        y = "Sentiment Score")
+
+# ggsave(plot = impeach_box_plot, "plots/impeach_sentiment_boxplot.png")
 
 impeach_scatter_plot
 impeach_box_plot
